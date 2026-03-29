@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse
 import pydantic
 import secrets
 import redis.asyncio as redis
-import database
-from classes import UserCreate, UserSafe
+import app.database as db
+from app.classes import UserCreate, UserSafe
 app = fastapi.FastAPI()
 
 cache = redis.Redis(host = "localhost", port=6379, decode_responses=True)
@@ -35,7 +35,7 @@ async def user_login(user: UserCreate,
     if is_registered:
         return JSONResponse(content={"status" : "ok"},
                             status_code=200)
-    user_id = await database.verify_user(user.email, user.password)
+    user_id = await db.verify_user(user.email, user.password)
 
     if user_id:
         response = JSONResponse(content={"status" : "ok"})
@@ -69,10 +69,10 @@ async def logout(session_token: str = fastapi.Cookie(...)):
 
 @app.post("/user_register")
 async def user_register(user: UserCreate):
-    if not await database.is_unique_email(user.email):
+    if not await db.is_unique_email(user.email):
         raise fastapi.HTTPException(status_code=400, detail="email already exists ")
     
-    add_user_successful: bool = await database.add_user(user)
+    add_user_successful: bool = await db.add_user(user)
     if not add_user_successful:
         raise fastapi.HTTPException(
             status_code=500, detail="error occurred when adding user to db"
@@ -88,7 +88,7 @@ async def user_register(user: UserCreate):
           samesite="strict",
           max_age=1200
     )
-    user_id = await database.get_user_id(user.email)
+    user_id = await db.get_user_id(user.email)
     if user_id:
             await cache.set(session_token, user_id, ex=1200)
 
@@ -103,7 +103,7 @@ async def get_current_user(session_token: str = fastapi.Cookie(...)):
     user_id = await cache.get(session_token)
     if user_id:
         await cache.expire(session_token, 1200)
-        user_safe = await database.get_user(user_id)
+        user_safe = await db.get_user(user_id)
         return user_safe
     else:
         raise fastapi.HTTPException(
