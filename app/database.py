@@ -1,7 +1,6 @@
 import aiosqlite
 import pydantic
 import bcrypt
-import time
 from .classes import UserCreate, UserSafe
 
 DB_FILENAME = "database.db"
