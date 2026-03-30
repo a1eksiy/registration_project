@@ -7,7 +7,10 @@ import app.database as db
 from app.classes import UserCreate, UserSafe
 app = fastapi.FastAPI()
 
-cache = redis.Redis(host = "localhost", port=6379, decode_responses=True)
+
+#host = redis assumes container execution
+#switch to localhost for local testing
+cache = redis.Redis(host = "redis", port=6379, decode_responses=True)
 
 
 
