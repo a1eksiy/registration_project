@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 .env
 .git/
+app/data/database.db

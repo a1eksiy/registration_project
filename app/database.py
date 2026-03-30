@@ -3,7 +3,7 @@ import pydantic
 import bcrypt
 from .classes import UserCreate, UserSafe
 
-DB_FILENAME = "database.db"
+DB_FILENAME = "app/data/database.db"
 
 async def is_unique_email(email : pydantic.EmailStr) -> bool:
 
