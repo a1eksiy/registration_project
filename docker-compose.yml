@@ -1,0 +1,29 @@
+
+services:
+  app:
+    build: .
+    container_name: fastapi-app
+    ports:
+    - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+    - PYTHONUNBUFFERED=1
+    - PYTHONDONTWRITEBYTECODE=1
+    - PYTHONPATH=/app
+    volumes:
+      - .:/app
+      - ./app/data:/app/app/data
+    command: > 
+      uvicorn app.source:app
+      --host 0.0.0.0
+      --port 8000
+      
+
+
+  redis:
+    image: redis:latest
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    

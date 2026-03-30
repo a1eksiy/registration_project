@@ -1,6 +1,6 @@
 import pydantic
-import time
-import typing 
+
+
 
 class UserCreate(pydantic.BaseModel):
     email : pydantic.EmailStr

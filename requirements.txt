@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standart]
+aiosqlite
+pydantic
+email-validator
+bcrypt
+redis
