@@ -1,16 +1,29 @@
 import fastapi
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
+import os
+import aiosqlite
 import pydantic
 import secrets
 import redis.asyncio as redis
 import app.database as db
 from app.classes import UserCreate, UserSafe
-app = fastapi.FastAPI()
+
+
+@asynccontextmanager
+async def lifespan(app : fastapi.FastAPI):
+    await db.init_db()
+    yield
+
+app = fastapi.FastAPI(lifespan=lifespan)
 
 
 #host = redis assumes container execution
 #switch to localhost for local testing
 cache = redis.Redis(host = "redis", port=6379, decode_responses=True)
+
+
+
 
 
 

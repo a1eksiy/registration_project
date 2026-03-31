@@ -1,9 +1,27 @@
 import aiosqlite
 import pydantic
 import bcrypt
+import os
+
 from .classes import UserCreate, UserSafe
 
 DB_FILENAME = "app/data/database.db"
+
+async def init_db():
+    os.makedirs(os.path.dirname(DB_FILENAME), exist_ok=True)
+
+    async with aiosqlite.connect(DB_FILENAME) as conn:
+        await conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                           id INTEGER PRIMARY KEY AUTOINCREMENT,
+                           email TEXT UNIQUE NOT NULL,
+                           password TEXT NOT NULL
+                           )
+                           """)
+        await conn.commit()
+
+
+
 
 async def is_unique_email(email : pydantic.EmailStr) -> bool:
 
